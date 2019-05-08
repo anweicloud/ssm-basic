@@ -10,23 +10,29 @@
 	<context:property-placeholder location="classpath:jdbc.properties" />
 
 	<!-- 2.数据库连接池 -->
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<!-- 配置连接池属性 -->
-		<property name="driverClass" value="${jdbc.driver}" />
-		<property name="jdbcUrl" value="${jdbc.url}" />
-		<property name="user" value="${jdbc.username}" />
-		<property name="password" value="${jdbc.password}" />
-
-		<!-- c3p0连接池的私有属性 -->
-		<property name="maxPoolSize" value="30" />
-		<property name="minPoolSize" value="10" />
-		<!-- 关闭连接后不自动commit -->
-		<property name="autoCommitOnClose" value="false" />
-		<!-- 获取连接超时时间 -->
-		<property name="checkoutTimeout" value="10000" />
-		<!-- 当获取连接失败重试次数 -->
-		<property name="acquireRetryAttempts" value="2" />
-	</bean>
+	<bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="driverClassName" value="${jdbc_driver}" />
+        <property name="url" value="${jdbc_url}" />
+        <property name="username" value="${jdbc_username}" />
+        <property name="password" value="${jdbc_password}" />
+        
+        <property name="initialSize" value="1" />
+        <property name="minIdle" value="1" /> 
+     	<property name="maxActive" value="20" />
+     	<property name="maxWait" value="60000" />
+     	<property name="keepAlive" value="true" />
+     	
+        <property name="validationQuery" value="SELECT 1" />  
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+        
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+        <property name="poolPreparedStatements" value="true" />
+     	<property name="maxOpenPreparedStatements" value="20" />
+     	
+    </bean>
 
 	<!-- 3.配置SqlSessionFactory对象 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -35,7 +41,7 @@
 		<!-- 配置MyBaties全局配置文件:mybatis-config.xml -->
 		<property name="configLocation" value="classpath:mybatis-config.xml" />
 		<!-- 扫描entity包 使用别名 -->
-		<property name="typeAliasesPackage" value="com.soecode.lyf.entity" />
+		<property name="typeAliasesPackage" value="com.anwei.entity" />
 		<!-- 扫描sql配置文件:mapper需要的xml文件 -->
 		<property name="mapperLocations" value="classpath:mapper/*.xml" />
 	</bean>
@@ -45,6 +51,6 @@
 		<!-- 注入sqlSessionFactory -->
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 		<!-- 给出需要扫描Dao接口包 -->
-		<property name="basePackage" value="com.soecode.lyf.dao" />
+		<property name="basePackage" value="com.anwei.dao" />
 	</bean>
 </beans>
